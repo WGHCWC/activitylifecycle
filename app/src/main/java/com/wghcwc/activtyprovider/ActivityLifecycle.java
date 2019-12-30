@@ -12,6 +12,21 @@ import java.util.WeakHashMap;
  * @date 19-12-5
  */
 public class ActivityLifecycle implements Application.ActivityLifecycleCallbacks {
+    private static Application mApplication;
+
+    public static void init(Application application) {
+        mApplication = application;
+        mApplication.registerActivityLifecycleCallbacks(getInstance());
+    }
+
+    public static Application getApplication() {
+        if (mApplication == null) {
+            throw new IllegalStateException("请在Application onCreate 中调用" +
+                    " ActivityLifecycle.init(Application application) 初始化!");
+        }
+        return mApplication;
+    }
+
     public static ActivityLifecycle instance;
 
     private final WeakHashMap<Activity, LinkedList<ActivityChangeListener>> activityLinked;
