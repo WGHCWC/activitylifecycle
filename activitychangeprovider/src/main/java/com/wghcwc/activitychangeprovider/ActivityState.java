@@ -1,4 +1,4 @@
-package com.wghcwc.activtyprovider;
+package com.wghcwc.activitychangeprovider;
 
 /**
  * @author wghcwc
