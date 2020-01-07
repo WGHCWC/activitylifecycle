@@ -12,8 +12,8 @@ import java.util.WeakHashMap;
  * @date 19-12-5
  */
 public class ActivityLifecycle implements Application.ActivityLifecycleCallbacks {
-    public static ActivityLifecycle instance;
-    public static Application app;
+    private static ActivityLifecycle instance;
+    private static Application app;
     private static volatile boolean init;
 
     public static synchronized void init(Application application) {
@@ -29,6 +29,13 @@ public class ActivityLifecycle implements Application.ActivityLifecycleCallbacks
 
     static {
         instance = new ActivityLifecycle();
+    }
+
+    public static Application getApp() {
+        if (app == null) {
+            throw new NullPointerException(" need ActivityLifecycle.init(Application application) in Application");
+        }
+        return app;
     }
 
     private ActivityLifecycle() {
