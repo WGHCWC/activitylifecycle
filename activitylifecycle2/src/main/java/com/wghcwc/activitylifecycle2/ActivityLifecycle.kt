@@ -59,7 +59,7 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
         activityLinked.remove(activity)
     }
 
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle) {
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         ActivityStack.pushActivity(activity)
     }
 
@@ -91,7 +91,7 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
         }
     }
 
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {}
     override fun onActivityDestroyed(activity: Activity) {
         ActivityStack.removeActivity(activity)
         val linkedList = activityLinked[activity] ?: return

@@ -1,2 +1,2 @@
-include ':app', ':activitylifecycle2'
+include ':activitylifecycle2'
 rootProject.name='ActivityLifecycle'
