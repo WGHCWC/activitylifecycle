@@ -14,7 +14,7 @@ interface ActivityChangeListener {
      * @return true 删除当前listener
      * false 不变
      */
-    fun onActivityDestroy(activity: Activity?)
+    fun onActivityDestroy(activity: Activity)
 
     /**
      * 状态改变
@@ -22,5 +22,5 @@ interface ActivityChangeListener {
      * @param activity
      * @param state
      */
-    fun onActivitySateChange(activity: Activity?, state: ActivityState?)
+    fun onActivitySateChange(activity: Activity, state: ActivityState)
 }
