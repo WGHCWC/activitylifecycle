@@ -12,7 +12,7 @@ import java.util.*
  */
 object ActivityLifecycle : ActivityLifecycleCallbacks {
     private val activityLinked = WeakHashMap<Activity, LinkedList<ActivityChangeListener>>()
-    private var app: Application? = null
+    private lateinit var app: Application
     private var init = false
     @JvmStatic
     fun init(application: Application) {
@@ -25,8 +25,8 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
     }
 
     @JvmStatic
-    fun getApp(): Application? {
-        if (app == null) {
+    fun getApp(): Application {
+        if (!init) {
             throw NullPointerException(" need ActivityLifecycle.init(Application application) in Application")
         }
         return app
