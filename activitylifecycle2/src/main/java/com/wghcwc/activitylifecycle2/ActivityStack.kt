@@ -144,7 +144,7 @@ object ActivityStack {
      * 关闭所有服务.
      * @param context context
      */
-    private fun stopServices(context: Context) {
+     fun stopServices(context: Context) {
         Log.i(TAG, "Stopping all active services.")
         try {
             val activityManager: ActivityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
