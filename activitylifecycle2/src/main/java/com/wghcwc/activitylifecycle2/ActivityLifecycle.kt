@@ -14,7 +14,18 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
     private val activityLinked = WeakHashMap<Activity, LinkedList<ActivityChangeListener>>()
     private lateinit var app: Application
     private var init = false
-    @JvmStatic
+
+    //前台activity数量
+    private var foregroundCount = 0
+
+    //activity config改变数量
+    private var configChangeCount = 0
+
+    //是否前台数据
+    @Volatile
+    private var isForeground = true
+
+
     fun init(application: Application) {
         if (init) {
             return
@@ -24,7 +35,6 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
         init = true
     }
 
-    @JvmStatic
     fun getApp(): Application {
         if (!init) {
             throw NullPointerException(" need ActivityLifecycle.init(Application application) in Application")
@@ -32,8 +42,9 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
         return app
     }
 
-
-    @JvmStatic
+    /**
+     * 添加activity监听
+     * */
     fun add(activity: Activity, listener: ActivityChangeListener?) {
         var linkedList = activityLinked[activity]
         if (linkedList == null) {
@@ -43,7 +54,9 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
         activityLinked[activity] = linkedList
     }
 
-    @JvmStatic
+    /**
+     * 移除activity指定监听
+     * */
     fun remove(activity: Activity?, listener: ActivityChangeListener) {
         val linkedList: LinkedList<ActivityChangeListener>? = activityLinked[activity]
         if (linkedList != null) {
@@ -54,7 +67,9 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
         }
     }
 
-    @JvmStatic
+    /**
+     * 移除activity所有监听
+     * */
     fun remove(activity: Activity?) {
         activityLinked.remove(activity)
     }
@@ -64,6 +79,15 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStarted(activity: Activity) {
+
+        if (foregroundCount <= 0) {
+            isForeground = true
+        }
+        if (configChangeCount < 0) {
+            configChangeCount++
+        } else {
+            foregroundCount++
+        }
         val linkedList = activityLinked[activity] ?: return
         for (changeListener in linkedList) {
             changeListener.onActivitySateChange(activity, ActivityState.STARTED)
@@ -85,6 +109,15 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStopped(activity: Activity) {
+
+        if (activity.isChangingConfigurations) {
+            configChangeCount--
+        } else {
+            foregroundCount--
+            if (foregroundCount <= 0) {
+                isForeground = false
+            }
+        }
         val linkedList = activityLinked[activity] ?: return
         for (changeListener in linkedList) {
             changeListener.onActivitySateChange(activity, ActivityState.STOPPED)
@@ -92,6 +125,7 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {}
+
     override fun onActivityDestroyed(activity: Activity) {
         ActivityStack.removeActivity(activity)
         val linkedList = activityLinked[activity] ?: return
@@ -102,4 +136,11 @@ object ActivityLifecycle : ActivityLifecycleCallbacks {
         remove(activity)
     }
 
+
+    /**
+     * 当前应用是否在前台
+     * */
+    fun isForeground(): Boolean {
+        return isForeground
+    }
 }
