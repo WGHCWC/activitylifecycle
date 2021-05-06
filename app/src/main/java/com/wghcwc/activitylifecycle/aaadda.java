@@ -12,7 +12,7 @@ public class aaadda extends Activity {
 
 
     public void aa(){
-        ActivityLifecycle.init(getApplication());
+        ActivityLifecycle.INSTANCE.init(getApplication());
     }
 
 }
